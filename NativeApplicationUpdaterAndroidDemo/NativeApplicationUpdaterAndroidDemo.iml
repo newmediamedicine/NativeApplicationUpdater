@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="Flex" version="4">
+  <component name="FlexBuildConfigurationManager" active="NativeApplicationUpdaterAndroidDemo">
+    <configurations>
+      <configuration name="NativeApplicationUpdaterAndroidDemo" target-platform="Mobile" main-class="NativeApplicationUpdaterAndroidDemo" output-file="NativeApplicationUpdaterAndroidDemo.swf" output-folder="$MODULE_DIR$/../out/production/NativeApplicationUpdaterAndroidDemo">
+        <dependencies target-player="11.1">
+          <entries>
+            <entry module-name="NativeApplicationUpdater" build-configuration-name="NativeApplicationUpdater">
+              <dependency linkage="Merged" />
+            </entry>
+            <entry library-id="41f2b330-cee7-4ce0-ad58-6c16bc636e6a">
+              <dependency linkage="Merged" />
+            </entry>
+            <entry library-id="705fb69f-8c65-4f9b-8c56-2ba89fc61a14">
+              <dependency linkage="Merged" />
+            </entry>
+            <entry library-id="72ec01d7-26e7-48ee-a40b-177e8e5dad05">
+              <dependency linkage="Merged" />
+            </entry>
+            <entry library-id="539b4dd6-2e25-425a-ba82-1b2b1eba2ba1">
+              <dependency linkage="Merged" />
+            </entry>
+          </entries>
+          <sdk name="4.6.0" />
+        </dependencies>
+        <compiler-options />
+        <packaging-air-desktop />
+        <packaging-android enabled="true" use-generated-descriptor="false" custom-descriptor-path="$MODULE_DIR$/NativeApplicationUpdaterAndroidDemo-app.xml" package-file-name="NativeApplicationUpdaterAndroidDemo" />
+        <packaging-ios package-file-name="NativeApplicationUpdaterAndroidDemo" />
+      </configuration>
+    </configurations>
+    <compiler-options />
+  </component>
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+    </content>
+    <orderEntry type="jdk" jdkName="4.6.0" jdkType="Flex SDK Type (new)" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="NativeApplicationUpdater" />
+    <orderEntry type="module-library">
+      <library type="flex">
+        <properties id="41f2b330-cee7-4ce0-ad58-6c16bc636e6a" />
+        <CLASSES>
+          <root url="jar://$PROJECT_FRAMEWORKS$/libs/air/applicationupdater.swc!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library type="flex">
+        <properties id="705fb69f-8c65-4f9b-8c56-2ba89fc61a14" />
+        <CLASSES>
+          <root url="jar://$PROJECT_FRAMEWORKS$/libs/mx/mx.swc!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library type="flex">
+        <properties id="72ec01d7-26e7-48ee-a40b-177e8e5dad05" />
+        <CLASSES>
+          <root url="jar://$PROJECT_FRAMEWORKS$/libs/sparkskins.swc!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library type="flex">
+        <properties id="539b4dd6-2e25-425a-ba82-1b2b1eba2ba1" />
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/libs" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+        <jarDirectory url="file://$MODULE_DIR$/libs" recursive="false" />
+      </library>
+    </orderEntry>
+  </component>
+</module>
+

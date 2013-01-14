@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/AndroidInstallApkTest/AndroidInstallApkTest.iml" filepath="$PROJECT_DIR$/AndroidInstallApkTest/AndroidInstallApkTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/AndroidInstallApkTest/AndroidInstallApkTest.iml" filepath="$PROJECT_DIR$/AndroidInstallApkTest/AndroidInstallApkTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/NativeApplicationUpdater/NativeApplicationUpdater.iml" filepath="$PROJECT_DIR$/NativeApplicationUpdater/NativeApplicationUpdater.iml" />
+      <module fileurl="file://$PROJECT_DIR$/NativeApplicationUpdaterAndroidDemo/NativeApplicationUpdaterAndroidDemo.iml" filepath="$PROJECT_DIR$/NativeApplicationUpdaterAndroidDemo/NativeApplicationUpdaterAndroidDemo.iml" />
+      <module fileurl="file://$PROJECT_DIR$/NativeApplicationUpdaterAndroidDemo/NativeApplicationUpdaterAndroidDemo.iml" filepath="$PROJECT_DIR$/NativeApplicationUpdaterAndroidDemo/NativeApplicationUpdaterAndroidDemo.iml" />
+      <module fileurl="file://$PROJECT_DIR$/NativeApplicationUpdaterDemo/NativeApplicationUpdaterDemo.iml" filepath="$PROJECT_DIR$/NativeApplicationUpdaterDemo/NativeApplicationUpdaterDemo.iml" />
+    </modules>
+  </component>
+</project>
+

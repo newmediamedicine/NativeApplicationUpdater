@@ -4,7 +4,9 @@ package com.riaspace.nativeApplicationUpdater
 	import air.update.events.StatusUpdateErrorEvent;
 	import air.update.events.StatusUpdateEvent;
 	import air.update.events.UpdateEvent;
-	
+
+	import com.adobe.nativeExtensions.Vibration;
+
 	import com.riaspace.nativeApplicationUpdater.utils.HdiutilHelper;
 	
 	import flash.desktop.NativeApplication;
@@ -86,7 +88,10 @@ package com.riaspace.nativeApplicationUpdater
 		 * The updater is installing the AIR file.
 		 **/
 		public static const INSTALLING:String = "INSTALLING";
-		
+
+		/**
+		 * URL specifying the location of the update descriptor XML file to use for updating the application.
+		 */
 		[Bindable]		
 		public var updateURL:String;
 		
@@ -111,7 +116,9 @@ package com.riaspace.nativeApplicationUpdater
 		protected var updateDescriptorLoader:URLLoader;
 		
 		protected var os:String = Capabilities.os.toLowerCase();
-		
+
+		protected var manufacturer:String = Capabilities.manufacturer.toLowerCase();
+
 		protected var urlStream:URLStream;
 		
 		protected var fileStream:FileStream;
@@ -144,7 +151,9 @@ package com.riaspace.nativeApplicationUpdater
 				}
 				else if (os.indexOf("linux") > -1)
 				{
-					if ((new File("/usr/bin/dpkg")).exists)
+					if (manufacturer.indexOf("android") > -1)
+						installerType = "android";
+					else if ((new File("/usr/bin/dpkg")).exists)
 						installerType = "deb";
 					else
 						installerType = "rpm";
@@ -217,6 +226,8 @@ package com.riaspace.nativeApplicationUpdater
 			}
 		}
 
+		private var _isNewerVersion:Boolean;
+
 		protected function updateDescriptorLoader_completeHandler(event:Event):void
 		{
 			updateDescriptorLoader.removeEventListener(Event.COMPLETE, updateDescriptorLoader_completeHandler);
@@ -249,10 +260,11 @@ package com.riaspace.nativeApplicationUpdater
 				return;
 			}
 
-			currentState = AVAILABLE;			
+			currentState = AVAILABLE;
+			isNewerVersion = isNewerVersionFunction.call(this, currentVersion, updateVersion);
 			dispatchEvent(new StatusUpdateEvent(
 				StatusUpdateEvent.UPDATE_STATUS, false, true, 
-				isNewerVersionFunction.call(this, currentVersion, updateVersion), updateVersion)); // TODO: handle last event param with details (description)
+				isNewerVersion, updateVersion)); // TODO: handle last event param with details (description)
 		}
 		
 		protected function updateDescriptorLoader_ioErrorHandler(event:IOErrorEvent):void
@@ -278,8 +290,11 @@ package com.riaspace.nativeApplicationUpdater
 			if (currentState == AVAILABLE)
 			{
 				var fileName:String = updatePackageURL.substr(updatePackageURL.lastIndexOf("/") + 1);
-				downloadedFile = File.createTempDirectory().resolvePath(fileName);
-				
+				if (installerType == "android")
+					downloadedFile = File.documentsDirectory.resolvePath("Download").resolvePath(fileName);
+				else
+					downloadedFile = File.createTempDirectory().resolvePath(fileName);
+
 				fileStream = new FileStream();
 				fileStream.addEventListener(IOErrorEvent.IO_ERROR, urlStream_ioErrorHandler);
 				fileStream.addEventListener(Event.CLOSE, fileStream_closeHandler);
@@ -427,8 +442,12 @@ package com.riaspace.nativeApplicationUpdater
 			if (!beforeInstallEvent.isDefaultPrevented())
 			{
 				currentState = INSTALLING;
-				
-				if (os.indexOf("linux") > -1)
+
+				if (installerType == "android")
+				{
+					installAndroidPackage(updateFile);
+				}
+				else if (os.indexOf("linux") > -1)
 				{
 					updateFile.openWithDefaultApplication();
 				}
@@ -450,11 +469,33 @@ package com.riaspace.nativeApplicationUpdater
 					}
 					
 					var installProcess:NativeProcess = new NativeProcess();
-					installProcess.start(info);
+					try
+					{
+						installProcess.start(info);
+					} catch (e:Error)
+					{
+						var isDebugger:Boolean = Capabilities.isDebugger;
+						var playerType:String = Capabilities.playerType;
+
+						if (playerType == "Desktop" && isDebugger)
+						{
+							// ignore the error; not expected to work
+						}
+						else
+						{
+							dispatchEvent(new ErrorEvent(ErrorEvent.ERROR, false, false, e.toString(), e.errorID));
+						}
+					}
 				}
 				
 				setTimeout(NativeApplication.nativeApplication.exit, 200);
 			}
+		}
+
+		private function installAndroidPackage(updateFile:File):void
+		{
+			var vibration:Vibration = new Vibration();
+			vibration.vibrate(updateFile.nativePath, "application/vnd.android.package-archive");
 		}
 		
 		[Bindable]
@@ -463,7 +504,7 @@ package com.riaspace.nativeApplicationUpdater
 			return _currentVersion;
 		}
 
-		protected function set currentVersion(value:String):void
+		public function set currentVersion(value:String):void
 		{
 			_currentVersion = value;
 		}
@@ -474,7 +515,7 @@ package com.riaspace.nativeApplicationUpdater
 			return _updateVersion;
 		}
 
-		protected function set updateVersion(value:String):void
+		public function set updateVersion(value:String):void
 		{
 			_updateVersion = value;
 		}
@@ -485,7 +526,7 @@ package com.riaspace.nativeApplicationUpdater
 			return _updateDescriptor;
 		}
 
-		protected function set updateDescriptor(value:XML):void
+		public function set updateDescriptor(value:XML):void
 		{
 			_updateDescriptor = value;
 		}
@@ -496,7 +537,7 @@ package com.riaspace.nativeApplicationUpdater
 			return _currentState;
 		}
 
-		protected function set currentState(value:String):void
+		public function set currentState(value:String):void
 		{
 			_currentState = value;
 		}
@@ -507,7 +548,7 @@ package com.riaspace.nativeApplicationUpdater
 			return _downloadedFile;
 		}
 
-		protected function set downloadedFile(value:File):void
+		public function set downloadedFile(value:File):void
 		{
 			_downloadedFile = value;
 		}
@@ -532,18 +573,22 @@ package com.riaspace.nativeApplicationUpdater
 			return _installerType;
 		}
 
-		protected function set installerType(value:String):void
+		public function set installerType(value:String):void
 		{
 			_installerType = value;
 		}
 
+		/**
+		 * URL of the package/installer file to use to update the application on the current platform. Note that this
+		 * value will be set automatically from the update descriptor based on the current platform.
+		 */
 		[Bindable]
 		public function get updatePackageURL():String
 		{
 			return _updatePackageURL;
 		}
 		
-		protected function set updatePackageURL(value:String):void
+		public function set updatePackageURL(value:String):void
 		{
 			_updatePackageURL = value;
 		}
@@ -554,9 +599,20 @@ package com.riaspace.nativeApplicationUpdater
 			return _updateDescription;
 		}
 		
-		protected function set updateDescription(value:String):void
+		public function set updateDescription(value:String):void
 		{
 			_updateDescription = value;
+		}
+
+		[Bindable]
+		public function get isNewerVersion():Boolean
+		{
+			return _isNewerVersion;
+		}
+
+		public function set isNewerVersion(value:Boolean):void
+		{
+			_isNewerVersion = value;
 		}
 	}
 }
